@@ -1,29 +1,28 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
-    <HelloWorld/>
+    <router-view/>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld'
+import HelloWorld from './components/HelloWorld';
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    HelloWorld,
   },
-  created() {
-    this.$http.get('https://randomuser.me/api/')
-        .then((response) => {
-            console.log(response.data)
-        });
-  }
+  // created() {
+  //   const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/products`;
+  //   // http://伺服器路徑/api/申請的APIPath/products
+  //   console.log(process.env.APIPATH,process.env.CUSTOMPATH);
+  //   this.$http.get(api).then((response) => {
+  //           console.log(response.data)
+  //       });
+  // }
 }
 </script>
 
-<style>
-body {
-  background-color: gray;
-}
+<style lang="scss">
+@import './assets/all'
 </style>
