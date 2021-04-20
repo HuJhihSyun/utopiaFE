@@ -10,6 +10,8 @@ Vue.use(VueAxios, axios)
 Vue.config.productionTip = false
 Vue.config.productionTip = false
 
+axios.defaults.withCredentials = true;
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

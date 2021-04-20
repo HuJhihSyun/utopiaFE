@@ -27,12 +27,19 @@ export default {
         }
         }
     },
-    signin() {
-        const api = `${process.env.APIPATH}/signin`;
+    methods: {
+        signin() {
+        const api = `${process.env.APIPATH}/admin/signin`;
+        const vm =this;
         console.log(process.env.APIPATH);
-        this.$http.get(api).then((response) => {
+        console.log(api);
+        this.$http.post(api,vm.user).then((response) => {
                 console.log(response.data)
+                if (response.data.success) {
+                    vm.$router.push('/');
+                }
             });
+        }
     }
 }
 </script>
