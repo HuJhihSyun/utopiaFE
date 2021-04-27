@@ -8,7 +8,6 @@ import router from './router';
 
 Vue.use(VueAxios, axios)
 Vue.config.productionTip = false
-Vue.config.productionTip = false
 
 axios.defaults.withCredentials = true;
 
@@ -19,3 +18,25 @@ new Vue({
   template: '<App/>',
   router
 })
+
+router.beforeEach( (to,from,next) =>{
+    console.log('to',to,'from',from,'next',next);
+    if (to.meta.requiresAuth) {
+      console.log('這裡需要驗證');
+      const api = `${process.env.APIPATH}/api/user/check`;
+        axios.post(api).then((response) => {
+                console.log(response.data)
+                if (response.data.success) {
+                    next();
+                } else {
+                  next(
+                    {
+                      path:'/login',
+                    }
+                  );
+                }
+            });
+    } else {
+      next();
+    }
+  });
