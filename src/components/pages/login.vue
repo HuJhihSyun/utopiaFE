@@ -18,29 +18,33 @@
 
 <script>
 export default {
-    name: '',
-    data () {
+  name: '',
+  data () {
     return {
-        user:{
-            username:'',
-            password:'',
-        }
-        }
-    },
-    methods: {
-        signin() {
-        const api = `${process.env.APIPATH}/admin/signin`;
-        const vm =this;
-        console.log(process.env.APIPATH);
-        console.log(api);
-        this.$http.post(api,vm.user).then((response) => {
-                console.log(response.data)
-                if (response.data.success) {
-                    vm.$router.push('/');
-                }
-            });
-        }
+      user: {
+        username: '',
+        password: ''
+      }
     }
+  },
+  methods: {
+    signin () {
+      const api = `${process.env.APIPATH}/admin/signin`
+      const vm = this
+      console.log(process.env.APIPATH)
+      console.log(api)
+      this.$http.post(api, vm.user).then((response) => {
+        console.log(response.data)
+        if (response.data.success) {
+          const token = response.data.token
+          const expired = response.data.expired
+          console.log(token, expired)
+          document.cookie = `hexotoken=${token}; hexexpired=${new Date(expired)};`
+          vm.$router.push('/products')
+        }
+      })
+    }
+  }
 }
 </script>
 

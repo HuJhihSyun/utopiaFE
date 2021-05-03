@@ -13,15 +13,15 @@
 </template>
 
 <script>
-import sidebar from "./sidebar";
-import navbar from "./navbar";
+import sidebar from './sidebar'
+import navbar from './navbar'
 
 export default {
   components: {
     sidebar,
-    navbar,
-  },
-};
+    navbar
+  }
+}
 </script>
 
 <style>

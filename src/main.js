@@ -3,13 +3,15 @@
 import Vue from 'vue'
 import App from './App'
 import axios from 'axios'
+import 'bootstrap'
+import 'jquery'
 import VueAxios from 'vue-axios'
-import router from './router';
+import router from './router'
 
 Vue.use(VueAxios, axios)
 Vue.config.productionTip = false
 
-axios.defaults.withCredentials = true;
+axios.defaults.withCredentials = true
 
 /* eslint-disable no-new */
 new Vue({
@@ -19,24 +21,24 @@ new Vue({
   router
 })
 
-router.beforeEach( (to,from,next) =>{
-    console.log('to',to,'from',from,'next',next);
-    if (to.meta.requiresAuth) {
-      console.log('這裡需要驗證');
-      const api = `${process.env.APIPATH}/api/user/check`;
-        axios.post(api).then((response) => {
-                console.log(response.data)
-                if (response.data.success) {
-                    next();
-                } else {
-                  next(
-                    {
-                      path:'/login',
-                    }
-                  );
-                }
-            });
-    } else {
-      next();
-    }
-  });
+router.beforeEach((to, from, next) => {
+  console.log('to', to, 'from', from, 'next', next)
+  if (to.meta.requiresAuth) {
+    console.log('這裡需要驗證')
+    const api = `${process.env.APIPATH}/api/user/check`
+    axios.post(api).then((response) => {
+      console.log(response.data)
+      if (response.data.success) {
+        next()
+      } else {
+        next(
+          {
+            path: '/login'
+          }
+        )
+      }
+    })
+  } else {
+    next()
+  }
+})
