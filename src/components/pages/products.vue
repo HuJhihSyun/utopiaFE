@@ -19,10 +19,10 @@
                     <td>{{item.category}}</td>
                     <td>{{item.title}}</td>
                     <td class="text-right">
-                        {{item.origin_price}}
+                        {{item.origin_price | currency}}
                     </td>
                     <td class="text-right">
-                        {{item.price}}
+                        {{item.price | currency}}
                     </td>
                     <td>
                         <span v-if="item.is_enabled" class="text-success">啟用</span>
@@ -34,6 +34,26 @@
                 </tr>
             </tbody>
         </table>
+
+        <nav aria-label="Page navigation example">
+          <ul class="pagination">
+            <li class="page-item" :class="{'disabled':!pagination.has_pre}">
+              <a class="page-link" href="#" aria-label="Previous" @click.prevent="getProducts(pagination.current_page - 1)">
+                <span aria-hidden="true">&laquo;</span>
+                <span class="sr-only">Previous</span>
+              </a>
+            </li>
+            <li class="page-item" :class="{'active':pagination.current_page === page}" v-for="page in pagination.total_pages" :key="page">
+              <a class="page-link" href="#" @click.prevent="getProducts(page)">{{ page }}</a>
+            </li>
+            <li class="page-item" :class="{'disabled':!pagination.has_next}">
+              <a class="page-link" href="#" aria-label="Next" @click.prevent="getProducts(pagination.current_page + 1)">
+                <span aria-hidden="true">&raquo;</span>
+                <span class="sr-only">Next</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
 
         <!-- Modal -->
         <div class="modal fade" id="productModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -57,10 +77,10 @@
                         </div>
                         <div class="form-group">
                         <label for="customFile">或 上傳圖片
-                            <i class="fas fa-spinner fa-spin"></i>
+                            <i class="fas fa-spinner fa-spin" v-if="status.fileUpLoading"></i>
                         </label>
                         <input type="file" id="customFile" class="form-control"
-                            ref="files">
+                            ref="files" @change="uploadFile">
                         </div>
                         <img img="https://images.unsplash.com/photo-1483985988355-763728e1935b?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=828346ed697837ce808cae68d3ddc3cf&auto=format&fit=crop&w=1350&q=80"
                         class="img-fluid" alt="" :src="tempProduct.imageUrl">
@@ -161,19 +181,26 @@ export default {
   data () {
     return {
       products: [],
+      pagination: {},
       tempProduct: {},
-      isNew: false
+      isNew: false,
+      status: {
+        fileUpLoading: false
+      }
     }
   },
   methods: {
-    getProducts () {
-      const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/products`
+    getProducts (page = 1) {
+      const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/products?page=${page}`
       const vm = this
       console.log(process.env.APIPATH, process.env.CUSTOMPATH)
       console.log(api)
+      // vm.isLoading = true
       this.$http.get(api).then((response) => {
         console.log(response.data)
+        // vm.isLoading = false
         vm.products = response.data.products
+        vm.pagination = response.data.pagination
       })
     },
     openModal (isNew, item) {
@@ -208,6 +235,32 @@ export default {
           console.log('新增失敗')
         }
       })
+    },
+    uploadFile () {
+      console.log(this)
+      const uploadFile = this.$refs.files.files[0]
+      const vm = this
+      const formData = new FormData()
+      formData.append('file-to-upload', uploadFile)
+      const url = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/upload`
+      vm.status.fileUpLoading = true
+      this.$http.post(url, formData, {
+        headers: {
+          'Content-type': 'multipart/form-data'
+        }
+      }).then((response) => {
+        console.log(response.data)
+        vm.status.fileUpLoading = false
+        if (response.data.success) {
+          // vm.tempProduct.imgUrl = response.data.imageUrl
+          // console.log(vm.tempProduct)
+          vm.$set(vm.tempProduct, 'imageUrl', response.data.imageUrl)
+        } else {
+          this.$bus.$emit('message:push', response.data.message, 'danger')
+        }
+      }
+
+      )
     }
   },
   created () {

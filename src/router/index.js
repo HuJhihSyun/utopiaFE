@@ -5,6 +5,8 @@ import Router from 'vue-router'
 import dashboard from '@/components/dashboard'
 import Login from '@/components/pages/login'
 import products from '@/components/pages/products'
+import customerOrder from '@/components/pages/customerOrders'
+import customerCheckout from '@/components/pages/customerCheckout'
 
 Vue.use(Router)
 
@@ -31,10 +33,27 @@ export default new Router({
       component: dashboard, // 對應的元件
       children: [
         {
-          path: '/products',
+          path: 'products',
           name: 'products',
           component: products,
-          meta: {requiresAuth: true}
+          meta: {requiresAuth: true} // 是否需經過驗證
+        }
+      ]
+    },
+    {
+      name: 'dashboard', // 元件呈現的名稱
+      path: '/', // 對應的虛擬路徑
+      component: dashboard, // 對應的元件
+      children: [
+        {
+          path: 'customer_order',
+          name: 'customerOrder',
+          component: customerOrder
+        },
+        {
+          path: 'customer_checkout/:orderId',
+          name: 'customerCheckout',
+          component: customerCheckout
         }
       ]
     }

@@ -7,11 +7,35 @@ import 'bootstrap'
 import 'jquery'
 import VueAxios from 'vue-axios'
 import router from './router'
+import './bus'
+import currencyFilter from './filters/currency'
+import { ValidationObserver, ValidationProvider, extend, localize, configure } from 'vee-validate'
+import TW from 'vee-validate/dist/locale/zh_TW.json'
+import * as rules from 'vee-validate/dist/rules'
 
 Vue.use(VueAxios, axios)
+// Vue.use(VeeValidate)
 Vue.config.productionTip = false
 
 axios.defaults.withCredentials = true
+
+Vue.filter('currency', currencyFilter)
+
+Object.keys(rules).forEach((rule) => {
+  extend(rule, rules[rule])
+})
+
+localize('zh_TW', TW)
+
+Vue.component('ValidationObserver', ValidationObserver)
+Vue.component('ValidationProvider', ValidationProvider)
+
+configure({
+  classes: {
+    valid: 'is-valid',
+    invalid: 'is-invalid'
+  }
+})
 
 /* eslint-disable no-new */
 new Vue({
